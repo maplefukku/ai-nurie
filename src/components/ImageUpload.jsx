@@ -23,18 +23,16 @@ export default function ImageUpload() {
   const handleUpload = async () => {
     if (!file) return
     setUploading(true)
-    const formData = new FormData()
-    formData.append('file', file)
 
     try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      })
-      const data = await response.json()
-      if (data.id) {
-        navigate(`/coloring/${data.id}`)
-      }
+      // Simulate file upload and processing
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      
+      // Generate a random ID for the coloring page
+      const id = Math.random().toString(36).substr(2, 9)
+      
+      // Navigate to the coloring page with the generated ID
+      navigate(`/coloring/${id}`)
     } catch (error) {
       console.error('Upload failed:', error)
     } finally {
