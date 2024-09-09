@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -24,8 +24,9 @@ export default function Component() {
     multiple: false,
   });
 
-  const handleUpload = () => {
+  const handleUploadAndDownload = useCallback(async () => {
     if (!file) return;
+    
     // Simulate upload progress
     const interval = setInterval(() => {
       setProgress((prevProgress) => {
@@ -36,7 +37,14 @@ export default function Component() {
         return prevProgress + 10;
       });
     }, 300);
-  };
+
+    // Simulate upload completion
+    setTimeout(() => {
+      clearInterval(interval);
+      setProgress(100);
+      handleDownloadPDF();
+    }, 3000);
+  }, [file]);
 
   const handleDownloadPDF = async () => {
     if (!pageRef.current) return;
@@ -49,6 +57,12 @@ export default function Component() {
     pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
     pdf.save('coloring-page.pdf');
   };
+
+  useEffect(() => {
+    if (file) {
+      handleUploadAndDownload();
+    }
+  }, [file, handleUploadAndDownload]);
 
   return (
     <div className="w-full max-w-2xl mx-auto p-4 bg-white" ref={pageRef}>
@@ -105,25 +119,6 @@ export default function Component() {
           </div>
         </div>
       )}
-      <div className="mt-4 flex justify-between">
-        <button
-          onClick={handleUpload}
-          disabled={!file || progress === 100}
-          className={`py-2 px-4 rounded text-white font-semibold transition-colors ${
-            !file || progress === 100
-              ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-purple-500 hover:bg-purple-600'
-          }`}
-        >
-          {progress === 100 ? '送信完了' : '送信'}
-        </button>
-        <button
-          onClick={handleDownloadPDF}
-          className="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-        >
-          PDFをダウンロード
-        </button>
-      </div>
     </div>
   );
 }
