@@ -1,14 +1,12 @@
-'use client'
-
 import { useState, useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { useRouter } from 'next/navigation'
+import { useNavigate } from 'react-router-dom'
 
 export default function ImageUpload() {
   const [file, setFile] = useState(null)
   const [preview, setPreview] = useState(null)
   const [uploading, setUploading] = useState(false)
-  const router = useRouter()
+  const navigate = useNavigate()
 
   const onDrop = useCallback((acceptedFiles) => {
     const selectedFile = acceptedFiles[0]
@@ -35,7 +33,7 @@ export default function ImageUpload() {
       })
       const data = await response.json()
       if (data.id) {
-        router.push(`/coloring/${data.id}`)
+        navigate(`/coloring/${data.id}`)
       }
     } catch (error) {
       console.error('Upload failed:', error)
