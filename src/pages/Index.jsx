@@ -53,49 +53,47 @@ export default function Component() {
   }, [file, handleUploadAndDownload]);
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
-      <div className="w-[600px] bg-white shadow-lg rounded-lg overflow-hidden" ref={pageRef}>
-        <h1 className="text-3xl font-bold text-center my-6 px-4">
-          AIオーダーメイド〜世界に一つだけのぬりえ〜
-        </h1>
-        <div
-          {...getRootProps()}
-          className={`w-[560px] h-[560px] mx-auto border-2 border-black mb-6 cursor-pointer ${
-            isDragActive ? 'bg-gray-100' : ''
-          }`}
-        >
-          <input {...getInputProps()} />
-          <img
-            src={imageSrc}
-            alt="Coloring page"
-            className="w-full h-full object-cover"
+    <div className="w-full max-w-2xl mx-auto p-4 bg-white" ref={pageRef}>
+      <h1 className="text-2xl font-bold text-center mb-4">
+        AIオーダーメイド〜世界に一つだけのぬりえ〜
+      </h1>
+      <div
+        {...getRootProps()}
+        className={`w-full aspect-square border-2 border-black mb-4 cursor-pointer ${
+          isDragActive ? 'bg-gray-100' : ''
+        }`}
+      >
+        <input {...getInputProps()} />
+        <img
+          src={imageSrc}
+          alt="Coloring page"
+          className="w-full h-full object-cover"
+        />
+      </div>
+      <div className="w-full h-48 border-2 border-black p-2 flex flex-col justify-end">
+        <div className="flex justify-end items-center text-lg">
+          <input
+            type="text"
+            placeholder="年"
+            value={date.year}
+            onChange={(e) => setDate({ ...date, year: e.target.value })}
+            className="w-20 text-center mr-4 text-black placeholder-black text-2xl"
           />
-        </div>
-        <div className="w-[560px] h-[120px] mx-auto border-2 border-black p-4 flex flex-col justify-end mb-6">
-          <div className="flex justify-end items-center">
-            <input
-              type="text"
-              placeholder="年"
-              value={date.year}
-              onChange={(e) => setDate({ ...date, year: e.target.value })}
-              className="w-[80px] h-[40px] text-center mr-4 text-black placeholder-black text-2xl"
-            />
-            <input
-              type="text"
-              placeholder="月"
-              value={date.month}
-              onChange={(e) => setDate({ ...date, month: e.target.value })}
-              className="w-[60px] h-[40px] text-center mr-4 text-black placeholder-black text-2xl"
-            />
-            <input
-              type="text"
-              placeholder="日"
-              value={date.day}
-              onChange={(e) => setDate({ ...date, day: e.target.value })}
-              className="w-[60px] h-[40px] text-center mr-[60px] text-black placeholder-black text-2xl"
-            />
-            <span className="text-2xl">より</span>
-          </div>
+          <input
+            type="text"
+            placeholder="月"
+            value={date.month}
+            onChange={(e) => setDate({ ...date, month: e.target.value })}
+            className="w-16 text-center mr-4 text-black placeholder-black text-2xl"
+          />
+          <input
+            type="text"
+            placeholder="日"
+            value={date.day}
+            onChange={(e) => setDate({ ...date, day: e.target.value })}
+            className="w-16 text-center mr-[4rem] text-black placeholder-black text-2xl"
+          />
+          <span className="text-2xl">より</span>
         </div>
       </div>
     </div>
