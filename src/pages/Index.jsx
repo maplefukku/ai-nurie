@@ -7,7 +7,6 @@ export default function Component() {
   const [imageSrc, setImageSrc] = useState('/placeholder.svg');
   const [date, setDate] = useState({ year: '', month: '', day: '' });
   const [file, setFile] = useState(null);
-  const [progress, setProgress] = useState(0);
   const pageRef = useRef(null);
 
   const onDrop = useCallback((acceptedFiles) => {
@@ -27,23 +26,10 @@ export default function Component() {
   const handleUploadAndDownload = useCallback(async () => {
     if (!file) return;
     
-    // Simulate upload progress
-    const interval = setInterval(() => {
-      setProgress((prevProgress) => {
-        if (prevProgress >= 100) {
-          clearInterval(interval);
-          return 100;
-        }
-        return prevProgress + 10;
-      });
-    }, 300);
-
-    // Simulate upload completion
+    // Simulate upload process
     setTimeout(() => {
-      clearInterval(interval);
-      setProgress(100);
       handleDownloadPDF();
-    }, 3000);
+    }, 1000);
   }, [file]);
 
   const handleDownloadPDF = async () => {
@@ -108,17 +94,6 @@ export default function Component() {
           <span>より</span>
         </div>
       </div>
-      {file && (
-        <div className="mt-4">
-          <p className="text-sm text-gray-600 mb-2">{file.name}</p>
-          <div className="w-full bg-gray-200 rounded-full h-2.5">
-            <div
-              className="bg-purple-600 h-2.5 rounded-full transition-all duration-300 ease-out"
-              style={{ width: `${progress}%` }}
-            ></div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
