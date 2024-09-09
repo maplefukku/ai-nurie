@@ -1,44 +1,51 @@
-import { useState, useCallback } from 'react'
-import { useDropzone } from 'react-dropzone'
-import { useNavigate } from 'react-router-dom'
+import { useState, useCallback } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { useNavigate } from 'react-router-dom';
 
 export default function ImageUpload() {
-  const [file, setFile] = useState(null)
-  const [preview, setPreview] = useState(null)
-  const [uploading, setUploading] = useState(false)
-  const navigate = useNavigate()
+  const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const onDrop = useCallback((acceptedFiles) => {
-    const selectedFile = acceptedFiles[0]
-    setFile(selectedFile)
-    setPreview(URL.createObjectURL(selectedFile))
-  }, [])
+    const selectedFile = acceptedFiles[0];
+    setFile(selectedFile);
+    setPreview(URL.createObjectURL(selectedFile));
+    setError(null);
+  }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: { 'image/*': [] },
     multiple: false,
-  })
+  });
 
   const handleUpload = async () => {
-    if (!file) return
-    setUploading(true)
+    if (!file) {
+      setError('ファイルを選択してください。');
+      return;
+    }
+    setUploading(true);
+    setError(null);
 
     try {
       // Simulate file upload and processing
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
       // Generate a random ID for the coloring page
-      const id = Math.random().toString(36).substr(2, 9)
+      const id = Math.random().toString(36).substr(2, 9);
       
       // Navigate to the coloring page with the generated ID
-      navigate(`/coloring/${id}`)
+      navigate(`/coloring/${id}`);
     } catch (error) {
-      console.error('Upload failed:', error)
+      console.error('Upload failed:', error);
+      setError('アップロードに失敗しました。もう一度お試しください。');
     } finally {
-      setUploading(false)
+      setUploading(false);
     }
-  }
+  };
 
   return (
     <div className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md">
@@ -56,6 +63,7 @@ export default function ImageUpload() {
           <p className="text-gray-500">ここにファイルをドラッグ&ドロップするか、クリックしてファイルを選択してください</p>
         )}
       </div>
+      {error && <p className="text-red-500 mt-2">{error}</p>}
       <button
         onClick={handleUpload}
         disabled={!file || uploading}
@@ -68,5 +76,5 @@ export default function ImageUpload() {
         {uploading ? '送信中...' : '送信'}
       </button>
     </div>
-  )
+  );
 }
