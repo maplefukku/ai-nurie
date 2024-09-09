@@ -68,7 +68,7 @@ export default function Component() {
           className="w-full h-full object-cover"
         />
       </div>
-      <div className="w-full h-24 border-2 border-black p-2 flex flex-col justify-end">
+      <div className="w-full h-48 border-2 border-black p-2 flex flex-col justify-end">
         <div className="flex justify-end items-center">
           <input
             type="text"
