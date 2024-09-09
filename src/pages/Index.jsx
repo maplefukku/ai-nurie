@@ -1,19 +1,41 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
+import { useDropzone } from 'react-dropzone';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
 export default function Component() {
   const [imageSrc, setImageSrc] = useState('/placeholder.svg');
   const [date, setDate] = useState({ year: '', month: '', day: '' });
+  const [file, setFile] = useState(null);
+  const [progress, setProgress] = useState(0);
   const pageRef = useRef(null);
 
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => setImageSrc(e.target.result);
-      reader.readAsDataURL(file);
-    }
+  const onDrop = useCallback((acceptedFiles) => {
+    const selectedFile = acceptedFiles[0];
+    setFile(selectedFile);
+    const reader = new FileReader();
+    reader.onload = (e) => setImageSrc(e.target.result);
+    reader.readAsDataURL(selectedFile);
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: { 'image/*': [] },
+    multiple: false,
+  });
+
+  const handleUpload = () => {
+    if (!file) return;
+    // Simulate upload progress
+    const interval = setInterval(() => {
+      setProgress((prevProgress) => {
+        if (prevProgress >= 100) {
+          clearInterval(interval);
+          return 100;
+        }
+        return prevProgress + 10;
+      });
+    }, 300);
   };
 
   const handleDownloadPDF = async () => {
@@ -33,7 +55,13 @@ export default function Component() {
       <h1 className="text-2xl font-bold text-center mb-4">
         AIオーダーメイド〜世界に一つだけのぬりえ〜
       </h1>
-      <div className="w-full aspect-square border-2 border-black mb-4">
+      <div
+        {...getRootProps()}
+        className={`w-full aspect-square border-2 border-black mb-4 cursor-pointer ${
+          isDragActive ? 'bg-gray-100' : ''
+        }`}
+      >
+        <input {...getInputProps()} />
         <img
           src={imageSrc}
           alt="Coloring page"
@@ -66,13 +94,29 @@ export default function Component() {
           <span>より</span>
         </div>
       </div>
+      {file && (
+        <div className="mt-4">
+          <p className="text-sm text-gray-600 mb-2">{file.name}</p>
+          <div className="w-full bg-gray-200 rounded-full h-2.5">
+            <div
+              className="bg-purple-600 h-2.5 rounded-full transition-all duration-300 ease-out"
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
+        </div>
+      )}
       <div className="mt-4 flex justify-between">
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleImageUpload}
-          className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
-        />
+        <button
+          onClick={handleUpload}
+          disabled={!file || progress === 100}
+          className={`py-2 px-4 rounded text-white font-semibold transition-colors ${
+            !file || progress === 100
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-purple-500 hover:bg-purple-600'
+          }`}
+        >
+          {progress === 100 ? '送信完了' : '送信'}
+        </button>
         <button
           onClick={handleDownloadPDF}
           className="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
