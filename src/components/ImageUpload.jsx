@@ -1,36 +1,48 @@
-import { useState, useCallback } from 'react';
-import { useDropzone } from 'react-dropzone';
+'use client'
 
-const ImageUpload = () => {
-  const [file, setFile] = useState(null);
-  const [preview, setPreview] = useState(null);
-  const [progress, setProgress] = useState(0);
+import { useState, useCallback } from 'react'
+import { useDropzone } from 'react-dropzone'
+import { useRouter } from 'next/navigation'
+
+export default function ImageUpload() {
+  const [file, setFile] = useState(null)
+  const [preview, setPreview] = useState(null)
+  const [uploading, setUploading] = useState(false)
+  const router = useRouter()
 
   const onDrop = useCallback((acceptedFiles) => {
-    const selectedFile = acceptedFiles[0];
-    setFile(selectedFile);
-    setPreview(URL.createObjectURL(selectedFile));
-  }, []);
+    const selectedFile = acceptedFiles[0]
+    setFile(selectedFile)
+    setPreview(URL.createObjectURL(selectedFile))
+  }, [])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: { 'image/*': [] },
     multiple: false,
-  });
+  })
 
-  const handleUpload = () => {
-    if (!file) return;
-    // Simulate upload progress
-    const interval = setInterval(() => {
-      setProgress((prevProgress) => {
-        if (prevProgress >= 100) {
-          clearInterval(interval);
-          return 100;
-        }
-        return prevProgress + 10;
-      });
-    }, 300);
-  };
+  const handleUpload = async () => {
+    if (!file) return
+    setUploading(true)
+    const formData = new FormData()
+    formData.append('file', file)
+
+    try {
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      })
+      const data = await response.json()
+      if (data.id) {
+        router.push(`/coloring/${data.id}`)
+      }
+    } catch (error) {
+      console.error('Upload failed:', error)
+    } finally {
+      setUploading(false)
+    }
+  }
 
   return (
     <div className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md">
@@ -48,30 +60,17 @@ const ImageUpload = () => {
           <p className="text-gray-500">ここにファイルをドラッグ&ドロップするか、クリックしてファイルを選択してください</p>
         )}
       </div>
-      {file && (
-        <div className="mt-4">
-          <p className="text-sm text-gray-600 mb-2">{file.name}</p>
-          <div className="w-full bg-gray-200 rounded-full h-2.5">
-            <div
-              className="bg-purple-600 h-2.5 rounded-full transition-all duration-300 ease-out"
-              style={{ width: `${progress}%` }}
-            ></div>
-          </div>
-        </div>
-      )}
       <button
         onClick={handleUpload}
-        disabled={!file || progress === 100}
+        disabled={!file || uploading}
         className={`w-full mt-6 py-3 px-4 rounded-lg text-white font-semibold transition-all duration-300 ${
-          !file || progress === 100
+          !file || uploading
             ? 'bg-gray-400 cursor-not-allowed'
             : 'bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700'
         }`}
       >
-        {progress === 100 ? '送信完了' : '送信'}
+        {uploading ? '送信中...' : '送信'}
       </button>
     </div>
-  );
-};
-
-export default ImageUpload;
+  )
+}
