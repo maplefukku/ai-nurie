@@ -69,29 +69,29 @@ export default function Component() {
         />
       </div>
       <div className="w-full h-48 border-2 border-black p-2 flex flex-col justify-end">
-        <div className="flex justify-end items-center">
+        <div className="flex justify-end items-center text-lg">
           <input
             type="text"
             placeholder="年"
             value={date.year}
             onChange={(e) => setDate({ ...date, year: e.target.value })}
-            className="w-16 text-center mr-4 text-black placeholder-black"
+            className="w-20 text-center mr-4 text-black placeholder-black text-2xl"
           />
           <input
             type="text"
             placeholder="月"
             value={date.month}
             onChange={(e) => setDate({ ...date, month: e.target.value })}
-            className="w-12 text-center mr-4 text-black placeholder-black"
+            className="w-16 text-center mr-4 text-black placeholder-black text-2xl"
           />
           <input
             type="text"
             placeholder="日"
             value={date.day}
             onChange={(e) => setDate({ ...date, day: e.target.value })}
-            className="w-12 text-center mr-[4rem] text-black placeholder-black"
+            className="w-16 text-center mr-[4rem] text-black placeholder-black text-2xl"
           />
-          <span>より</span>
+          <span className="text-2xl">より</span>
         </div>
       </div>
     </div>
