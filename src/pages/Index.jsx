@@ -7,11 +7,13 @@ export default function Component() {
   const [imageSrc, setImageSrc] = useState('/placeholder.svg');
   const [date, setDate] = useState({ year: '', month: '', day: '' });
   const [file, setFile] = useState(null);
+  const [fileName, setFileName] = useState('coloring-page');
   const pageRef = useRef(null);
 
   const onDrop = useCallback((acceptedFiles) => {
     const selectedFile = acceptedFiles[0];
     setFile(selectedFile);
+    setFileName(selectedFile.name.split('.')[0] || 'coloring-page');
     const reader = new FileReader();
     reader.onload = (e) => setImageSrc(e.target.result);
     reader.readAsDataURL(selectedFile);
@@ -41,7 +43,7 @@ export default function Component() {
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = pdf.internal.pageSize.getHeight();
     pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-    pdf.save('coloring-page.pdf');
+    pdf.save(`${fileName}-coloring.pdf`);
   };
 
   useEffect(() => {
